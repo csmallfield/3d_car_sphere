@@ -17,7 +17,7 @@ var turn_input = 0
 var body_tilt = 35
 
 @onready var ship_mesh: Node3D = $shipTest
-@onready var body_mesh: Node3D = $shipTest/ship01
+@onready var body_mesh: Node3D = $shipTest/ship01  # ← Verify this path!
 @onready var ground_ray: RayCast3D = $shipTest/RayCast3D
 
 
@@ -33,13 +33,15 @@ func _process(delta):
 	speed_input = Input.get_axis("brake", "accelerate") * acceleration
 	turn_input = Input.get_axis("steer_right", "steer_left") * deg_to_rad(steering)
 	
-	# rotate car mesh
+	# rotate ship mesh
 	if linear_velocity.length() > turn_stop_limit:
 		var new_basis = ship_mesh.global_transform.basis.rotated(ship_mesh.global_transform.basis.y, turn_input)
 		ship_mesh.global_transform.basis = ship_mesh.global_transform.basis.slerp(new_basis, turn_speed * delta)
 		ship_mesh.global_transform = ship_mesh.global_transform.orthonormalized()
 		var t = -turn_input * linear_velocity.length() / body_tilt
 		body_mesh.rotation.z = lerp(body_mesh.rotation.z, t, 5.0 * delta)
+		
+		# Ground alignment must be INSIDE the velocity check
 		if ground_ray.is_colliding():
 			var n = ground_ray.get_collision_normal()
 			var xform = align_with_y(ship_mesh.global_transform, n)
