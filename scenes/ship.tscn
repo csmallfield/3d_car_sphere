@@ -24,7 +24,7 @@ height = 2.0
 [node name="Ship" type="RigidBody3D"]
 collision_layer = 2
 physics_material_override = SubResource("PhysicsMaterial_7j21i")
-gravity_scale = 5.0
+gravity_scale = 2.0
 angular_damp = 10.0
 script = ExtResource("1_4tobq")
 
