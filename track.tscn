@@ -1,7 +1,7 @@
 [gd_scene load_steps=10 format=3 uid="uid://o2pw746ej8d4"]
 
 [ext_resource type="PackedScene" uid="uid://dta0aubqubx5g" path="res://assets/track_2.glb" id="1_nhwcv"]
-[ext_resource type="PackedScene" uid="uid://cvh0fwg53wpus" path="res://car.tscn" id="2_sl2w6"]
+[ext_resource type="PackedScene" uid="uid://cvq5xydrwsamu" path="res://scenes/ship.tscn" id="2_8nfsw"]
 [ext_resource type="Script" uid="uid://cvuwsasmbq25i" path="res://Camera3D.gd" id="3_r0uie"]
 [ext_resource type="Material" uid="uid://f5edkxv6sao2" path="res://shaders/resources/grid_material.tres" id="4_8nfsw"]
 
@@ -48,16 +48,12 @@ visible = false
 shape = SubResource("ConcavePolygonShape3D_slpey")
 disabled = true
 
-[node name="Car" parent="." index="3" instance=ExtResource("2_sl2w6")]
-transform = Transform3D(0.998097, 0, 0.0616583, 0, 1, 0, -0.0616584, 0, 0.998097, 0, 2.05437, 5.31624)
-
-[node name="CarMesh" parent="Car" index="1"]
-transform = Transform3D(0.0025831, 0, 0.999997, 0, 1, 0, -0.999997, 0, 0.0025831, 0, 0, 5.29861)
+[node name="Ship" parent="." index="3" instance=ExtResource("2_8nfsw")]
 
 [node name="Camera3D" type="Camera3D" parent="." index="4" node_paths=PackedStringArray("target")]
 script = ExtResource("3_r0uie")
 offset = Vector3(2.08165e-12, 3, 4)
-target = NodePath("../Car/CarMesh")
+target = NodePath("../Ship/shipTest")
 
 [node name="Track" type="Path3D" parent="." index="5"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.5073757, 0)
@@ -81,4 +77,4 @@ path_joined = false
 smooth_faces = true
 material = ExtResource("4_8nfsw")
 
-[editable path="Car"]
+[editable path="Ship"]

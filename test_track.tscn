@@ -1,6 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://dfvtgkn51m33g"]
+[gd_scene load_steps=7 format=3 uid="uid://dfvtgkn51m33g"]
 
 [ext_resource type="PackedScene" uid="uid://cvh0fwg53wpus" path="res://car.tscn" id="1_tpaj3"]
+[ext_resource type="Script" uid="uid://cvuwsasmbq25i" path="res://Camera3D.gd" id="2_dd2be"]
 
 [sub_resource type="Sky" id="Sky_c6jrw"]
 
@@ -52,3 +53,8 @@ smooth_faces = true
 material = SubResource("StandardMaterial3D_tpaj3")
 
 [node name="Car" parent="." instance=ExtResource("1_tpaj3")]
+
+[node name="Camera3D" type="Camera3D" parent="." node_paths=PackedStringArray("target")]
+script = ExtResource("2_dd2be")
+offset = Vector3(2.08165e-12, 3, 4)
+target = NodePath("")
