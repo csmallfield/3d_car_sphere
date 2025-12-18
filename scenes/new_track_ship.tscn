@@ -1,0 +1,39 @@
+[gd_scene load_steps=7 format=3 uid="uid://hk6kjliu6vmu"]
+
+[ext_resource type="Script" uid="uid://cvuwsasmbq25i" path="res://Camera3D.gd" id="1_dhs7e"]
+[ext_resource type="PackedScene" uid="uid://d1u5hhcgev84t" path="res://trackGeo.tscn" id="2_3oxki"]
+[ext_resource type="PackedScene" uid="uid://cvq5xydrwsamu" path="res://scenes/ship.tscn" id="3_pvpcr"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_6q3eh"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_n6yw6"]
+sky_material = SubResource("ProceduralSkyMaterial_6q3eh")
+
+[sub_resource type="Environment" id="Environment_tgdiu"]
+background_mode = 2
+sky = SubResource("Sky_n6yw6")
+tonemap_mode = 2
+glow_enabled = true
+
+[node name="new_track_ship" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_tgdiu")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 0, 0)
+shadow_enabled = true
+
+[node name="Camera3D" type="Camera3D" parent="." node_paths=PackedStringArray("target")]
+script = ExtResource("1_dhs7e")
+offset = Vector3(2.08165e-12, 3, 4)
+target = NodePath("../Ship/shipTest")
+
+[node name="Track" parent="." instance=ExtResource("2_3oxki")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.5073757, 0)
+
+[node name="Ship" parent="." instance=ExtResource("3_pvpcr")]
+
+[editable path="Ship"]

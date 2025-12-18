@@ -1,0 +1,39 @@
+[gd_scene load_steps=7 format=3 uid="uid://bhrs5xgimwqa7"]
+
+[ext_resource type="Script" uid="uid://cvuwsasmbq25i" path="res://Camera3D.gd" id="1_fiol4"]
+[ext_resource type="PackedScene" uid="uid://d1u5hhcgev84t" path="res://trackGeo.tscn" id="2_oyca1"]
+[ext_resource type="PackedScene" uid="uid://cvh0fwg53wpus" path="res://car.tscn" id="3_fiol4"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_6q3eh"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_n6yw6"]
+sky_material = SubResource("ProceduralSkyMaterial_6q3eh")
+
+[sub_resource type="Environment" id="Environment_tgdiu"]
+background_mode = 2
+sky = SubResource("Sky_n6yw6")
+tonemap_mode = 2
+glow_enabled = true
+
+[node name="new_track_car" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_tgdiu")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 0, 0)
+shadow_enabled = true
+
+[node name="Camera3D" type="Camera3D" parent="." node_paths=PackedStringArray("target")]
+script = ExtResource("1_fiol4")
+offset = Vector3(2.08165e-12, 3, 4)
+target = NodePath("../Car/CarMesh")
+
+[node name="Track" parent="." instance=ExtResource("2_oyca1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.5073757, 0)
+
+[node name="Car" parent="." instance=ExtResource("3_fiol4")]
+
+[editable path="Car"]
