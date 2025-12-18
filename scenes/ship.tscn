@@ -36,5 +36,6 @@ visible = false
 mesh = SubResource("SphereMesh_8qiel")
 
 [node name="shipTest" parent="." instance=ExtResource("3_gudjc")]
+top_level = true
 
 [node name="RayCast3D" type="RayCast3D" parent="shipTest"]

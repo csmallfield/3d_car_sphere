@@ -39,7 +39,7 @@ func _process(delta):
 		ship_mesh.global_transform.basis = ship_mesh.global_transform.basis.slerp(new_basis, turn_speed * delta)
 		ship_mesh.global_transform = ship_mesh.global_transform.orthonormalized()
 		var t = -turn_input * linear_velocity.length() / body_tilt
-		ship_mesh.rotation.z = lerp(body_mesh.rotation.z, t, 10 * delta)
+		body_mesh.rotation.z = lerp(body_mesh.rotation.z, t, 5 * delta)
 		
 	if ground_ray.is_colliding():
 		var n = ground_ray.get_collision_normal()
