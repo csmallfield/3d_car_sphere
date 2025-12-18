@@ -39,12 +39,11 @@ func _process(delta):
 		ship_mesh.global_transform.basis = ship_mesh.global_transform.basis.slerp(new_basis, turn_speed * delta)
 		ship_mesh.global_transform = ship_mesh.global_transform.orthonormalized()
 		var t = -turn_input * linear_velocity.length() / body_tilt
-		body_mesh.rotation.z = lerp(body_mesh.rotation.z, t, 5 * delta)
-		
-	if ground_ray.is_colliding():
-		var n = ground_ray.get_collision_normal()
-		var xform = align_with_y(ship_mesh.global_transform, n)
-		ship_mesh.global_transform = ship_mesh.global_transform.interpolate_with(xform, 10.0 * delta)
+		body_mesh.rotation.z = lerp(body_mesh.rotation.z, t, 5.0 * delta)
+		if ground_ray.is_colliding():
+			var n = ground_ray.get_collision_normal()
+			var xform = align_with_y(ship_mesh.global_transform, n)
+			ship_mesh.global_transform = ship_mesh.global_transform.interpolate_with(xform, 10.0 * delta)
 		
 func align_with_y(xform, new_y):
 	xform.basis.y = new_y
