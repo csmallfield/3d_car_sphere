@@ -16,11 +16,15 @@ var speed_input = 0
 var turn_input = 0
 var body_tilt = 35
 
+@export var hover_height = 1
+
 @onready var ship_mesh: Node3D = $shipTest
 @onready var body_mesh: Node3D = $shipTest/ship01  # ← Verify this path!
 @onready var ground_ray: RayCast3D = $shipTest/RayCast3D
 
 
+func _ready():
+	body_mesh.position.y = hover_height
 
 func _physics_process(delta):
 	ship_mesh.position = position + sphere_offset
