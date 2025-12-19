@@ -3,21 +3,21 @@ extends RigidBody3D
 # Where to place the car mesh relative to the sphere
 var sphere_offset = Vector3.DOWN
 # Engine power
-var acceleration = 40.0
+var acceleration = 50.0
 # Turn amount, in degrees
 var steering = 11.0
 # How quickly the car turns
-var turn_speed = 2.5
+var turn_speed = 2.75
 # Below this speed, the car doesn't turn
 var turn_stop_limit = 0.50
 
 # Variables for input values
 var speed_input = 0
 var turn_input = 0
-var body_tilt = 50
+var body_tilt = 60
 
 var airbrake_strength = 8.0  # How much extra turn
-var airbrake_drag = 0.985  # Speed reduction multiplier when airbraking
+var airbrake_drag = 0.987  # Speed reduction multiplier when airbraking
 
 @export var hover_height = 1
 

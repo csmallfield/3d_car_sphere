@@ -32,7 +32,8 @@ shadow_blur = 4.866
 [node name="Camera3D" type="Camera3D" parent="." node_paths=PackedStringArray("target")]
 fov = 65.0
 script = ExtResource("1_dhs7e")
-offset = Vector3(0, 3, 3.5)
+lerp_speed = 5.0
+offset = Vector3(0, 3, 3)
 target = NodePath("../Ship/shipTest")
 
 [node name="Track" parent="." instance=ExtResource("2_3oxki")]
