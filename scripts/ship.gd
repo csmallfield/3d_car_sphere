@@ -3,28 +3,40 @@ extends RigidBody3D
 # Where to place the car mesh relative to the sphere
 var sphere_offset = Vector3.DOWN
 # Engine power
-var acceleration = 35.0
+var acceleration = 38.0
 # Turn amount, in degrees
 var steering = 19.0
 # How quickly the car turns
-var turn_speed = 4.0
+var turn_speed = 3.0
 # Below this speed, the car doesn't turn
-var turn_stop_limit = 0.75
+var turn_stop_limit = 0.50
 
 # Variables for input values
 var speed_input = 0
 var turn_input = 0
-var body_tilt = 35
+var body_tilt = 50
 
 @export var hover_height = 1
 
 @onready var ship_mesh: Node3D = $shipTest
-@onready var body_mesh: Node3D = $shipTest/ship01  # ← Verify this path!
+@onready var body_mesh: Node3D = $shipTest/ship01
 @onready var ground_ray: RayCast3D = $shipTest/RayCast3D
 
+# Create a tilt wrapper in code
+var tilt_wrapper: Node3D
 
 func _ready():
-	body_mesh.position.y = hover_height
+	# Create wrapper node and reparent the body mesh
+	tilt_wrapper = Node3D.new()
+	tilt_wrapper.name = "TiltWrapper"
+	ship_mesh.add_child(tilt_wrapper)
+	
+	# Move body_mesh to be a child of tilt_wrapper
+	body_mesh.reparent(tilt_wrapper)
+	
+	# Apply hover height to the wrapper, not the body
+	tilt_wrapper.position.y = hover_height
+	body_mesh.position.y = 0  # Reset body_mesh to center of wrapper
 
 func _physics_process(delta):
 	ship_mesh.position = position + sphere_offset
@@ -43,7 +55,7 @@ func _process(delta):
 		ship_mesh.global_transform.basis = ship_mesh.global_transform.basis.slerp(new_basis, turn_speed * delta)
 		ship_mesh.global_transform = ship_mesh.global_transform.orthonormalized()
 		var t = -turn_input * linear_velocity.length() / body_tilt
-		body_mesh.rotation.z = lerp(body_mesh.rotation.z, t, 5.0 * delta)
+		tilt_wrapper.rotation.z = lerp(tilt_wrapper.rotation.z, t, 5.0 * delta)
 		
 		# Ground alignment must be INSIDE the velocity check
 		if ground_ray.is_colliding():

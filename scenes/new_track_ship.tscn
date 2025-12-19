@@ -25,10 +25,14 @@ environment = SubResource("Environment_tgdiu")
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 0, 0)
 shadow_enabled = true
+shadow_normal_bias = 4.01
+shadow_opacity = 0.61
+shadow_blur = 4.866
 
 [node name="Camera3D" type="Camera3D" parent="." node_paths=PackedStringArray("target")]
+fov = 65.0
 script = ExtResource("1_dhs7e")
-offset = Vector3(2.08165e-12, 3, 4)
+offset = Vector3(0, 3, 3.5)
 target = NodePath("../Ship/shipTest")
 
 [node name="Track" parent="." instance=ExtResource("2_3oxki")]

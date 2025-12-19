@@ -28,5 +28,4 @@ path_local = false
 path_continuous_u = true
 path_u_distance = 0.0
 path_joined = false
-smooth_faces = true
 material = ExtResource("1_gdm22")

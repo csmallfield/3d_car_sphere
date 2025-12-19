@@ -1,6 +1,6 @@
 extends Camera3D
 
-@export var lerp_speed = 3.0
+@export var lerp_speed = 4.0
 @export var offset = Vector3.ZERO
 @export var target : Node
 
