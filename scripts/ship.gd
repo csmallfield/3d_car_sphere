@@ -3,11 +3,11 @@ extends RigidBody3D
 # Where to place the car mesh relative to the sphere
 var sphere_offset = Vector3.DOWN
 # Engine power
-var acceleration = 38.0
+var acceleration = 40.0
 # Turn amount, in degrees
-var steering = 19.0
+var steering = 11.0
 # How quickly the car turns
-var turn_speed = 3.0
+var turn_speed = 2.5
 # Below this speed, the car doesn't turn
 var turn_stop_limit = 0.50
 
@@ -15,6 +15,9 @@ var turn_stop_limit = 0.50
 var speed_input = 0
 var turn_input = 0
 var body_tilt = 50
+
+var airbrake_strength = 8.0  # How much extra turn
+var airbrake_drag = 0.985  # Speed reduction multiplier when airbraking
 
 @export var hover_height = 1
 
@@ -49,12 +52,24 @@ func _process(delta):
 	speed_input = Input.get_axis("brake", "accelerate") * acceleration
 	turn_input = Input.get_axis("steer_right", "steer_left") * deg_to_rad(steering)
 	
+	# Airbrake logic
+	var airbrake_input = 0.0
+	if Input.is_action_pressed("airbrake_left"):
+		airbrake_input = 1.0  # Turn left harder
+		linear_velocity *= airbrake_drag  # Apply drag
+	elif Input.is_action_pressed("airbrake_right"):
+		airbrake_input = -1.0  # Turn right harder
+		linear_velocity *= airbrake_drag  # Apply drag
+	
+	# Combine normal steering with airbrake
+	var total_turn = turn_input + (airbrake_input * deg_to_rad(airbrake_strength))
+	
 	# rotate ship mesh
 	if linear_velocity.length() > turn_stop_limit:
-		var new_basis = ship_mesh.global_transform.basis.rotated(ship_mesh.global_transform.basis.y, turn_input)
+		var new_basis = ship_mesh.global_transform.basis.rotated(ship_mesh.global_transform.basis.y, total_turn)
 		ship_mesh.global_transform.basis = ship_mesh.global_transform.basis.slerp(new_basis, turn_speed * delta)
 		ship_mesh.global_transform = ship_mesh.global_transform.orthonormalized()
-		var t = -turn_input * linear_velocity.length() / body_tilt
+		var t = -total_turn * linear_velocity.length() / body_tilt
 		tilt_wrapper.rotation.z = lerp(tilt_wrapper.rotation.z, t, 5.0 * delta)
 		
 		# Ground alignment must be INSIDE the velocity check
