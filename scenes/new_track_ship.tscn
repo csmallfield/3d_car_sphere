@@ -33,12 +33,15 @@ shadow_blur = 4.866
 fov = 65.0
 script = ExtResource("1_dhs7e")
 lerp_speed = 5.0
-offset = Vector3(0, 3, 3)
+offset = Vector3(0, 4, 3)
 target = NodePath("../Ship/shipTest")
 
 [node name="Track" parent="." instance=ExtResource("2_3oxki")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.5073757, 0)
 
 [node name="Ship" parent="." instance=ExtResource("3_pvpcr")]
+
+[node name="RayCast3D" parent="Ship/shipTest" index="1"]
+target_position = Vector3(0, -2, 0)
 
 [editable path="Ship"]
