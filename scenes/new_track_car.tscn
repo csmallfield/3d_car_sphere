@@ -35,5 +35,6 @@ target = NodePath("../Car/CarMesh")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.5073757, 0)
 
 [node name="Car" parent="." instance=ExtResource("3_fiol4")]
+angular_damp = 10.0
 
 [editable path="Car"]

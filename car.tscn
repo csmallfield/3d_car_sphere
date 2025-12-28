@@ -25,10 +25,11 @@ height = 2.0
 collision_layer = 2
 physics_material_override = SubResource("PhysicsMaterial_dtpcx")
 gravity_scale = 2.0
-angular_damp = 10.0
+angular_damp = 5.0
 script = ExtResource("1_0cfhi")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, 0)
 shape = SubResource("SphereShape3D_ywja5")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="CollisionShape3D"]

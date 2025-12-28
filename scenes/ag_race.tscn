@@ -1,0 +1,116 @@
+[gd_scene load_steps=9 format=3 uid="uid://dfyw35fn5fut2"]
+
+[ext_resource type="Script" uid="uid://ckpg0ngb5spuf" path="res://scripts/ag_camera.gd" id="1_camera"]
+[ext_resource type="PackedScene" uid="uid://d1u5hhcgev84t" path="res://trackGeo.tscn" id="2_track"]
+[ext_resource type="Script" uid="uid://rb0nfxuceyy4" path="res://scripts/ag_ship.gd" id="3_ship"]
+[ext_resource type="PackedScene" uid="uid://du8cy2tcim5ko" path="res://assets/shipTest.glb" id="4_mesh"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sky"]
+sky_top_color = Color(0.1, 0.1, 0.2, 1)
+sky_horizon_color = Color(0.3, 0.2, 0.4, 1)
+ground_bottom_color = Color(0.05, 0.05, 0.1, 1)
+ground_horizon_color = Color(0.3, 0.2, 0.4, 1)
+sun_curve = 0.05
+
+[sub_resource type="Sky" id="Sky_main"]
+sky_material = SubResource("ProceduralSkyMaterial_sky")
+
+[sub_resource type="Environment" id="Environment_main"]
+background_mode = 2
+sky = SubResource("Sky_main")
+ambient_light_source = 2
+ambient_light_color = Color(0.3, 0.3, 0.4, 1)
+ambient_light_energy = 0.3
+tonemap_mode = 2
+tonemap_white = 1.2
+ssr_enabled = true
+ssao_enabled = true
+ssao_radius = 2.0
+glow_enabled = true
+glow_strength = 1.1
+glow_bloom = 0.3
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.01
+volumetric_fog_albedo = Color(0.3, 0.3, 0.5, 1)
+volumetric_fog_emission = Color(0.1, 0.1, 0.2, 1)
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ship"]
+radius = 1.2
+height = 11.404297
+
+[node name="AGRace" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_main")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 50, 0)
+light_color = Color(1, 0.95, 0.9, 1)
+light_energy = 1.2
+shadow_enabled = true
+shadow_blur = 2.0
+
+[node name="Track" parent="." instance=ExtResource("2_track")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.5, 0)
+
+[node name="AGShip" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -48, 17.787804, -244)
+collision_layer = 2
+script = ExtResource("3_ship")
+hover_stiffness = 50.0
+hover_damping = 8.0
+ground_conform_speed = 12.0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="AGShip"]
+transform = Transform3D(0.56, 0, 0, 0, -2.4478377e-08, -0.56, 0, 0.56, -2.4478377e-08, 0, 0.45371437, 0.39811707)
+shape = SubResource("CapsuleShape3D_ship")
+
+[node name="ShipMesh" parent="AGShip" instance=ExtResource("4_mesh")]
+transform = Transform3D(1.3, 0, 0, 0, 1.3, 0, 0, 0, 1.3, 0, 0, 0)
+
+[node name="Raycasts" type="Node3D" parent="AGShip"]
+
+[node name="Center" type="RayCast3D" parent="AGShip/Raycasts"]
+target_position = Vector3(0, -6, 0)
+
+[node name="Front" type="RayCast3D" parent="AGShip/Raycasts"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+target_position = Vector3(0, -6, 0)
+
+[node name="Back" type="RayCast3D" parent="AGShip/Raycasts"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.5)
+target_position = Vector3(0, -6, 0)
+
+[node name="Left" type="RayCast3D" parent="AGShip/Raycasts"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2, 0, 0)
+target_position = Vector3(0, -6, 0)
+
+[node name="Right" type="RayCast3D" parent="AGShip/Raycasts"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2, 0, 0)
+target_position = Vector3(0, -6, 0)
+
+[node name="Camera3D" type="Camera3D" parent="." node_paths=PackedStringArray("target", "ship")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -48, 20, -236)
+fov = 65.0
+script = ExtResource("1_camera")
+target = NodePath("../AGShip")
+ship = NodePath("../AGShip")
+base_height = 3.5
+look_ahead = 3.0
+position_smooth = 5.0
+rotation_smooth = 6.0
+height_smooth = 3.0
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="SpeedLabel" type="Label" parent="HUD"]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 30.0
+offset_top = -80.0
+offset_right = 250.0
+offset_bottom = -30.0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 32
+text = "000 km/h"

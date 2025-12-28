@@ -1,0 +1,94 @@
+[gd_scene load_steps=9 format=3 uid="uid://bcopkgxe2j0vi"]
+
+[ext_resource type="Script" uid="uid://bjd0mrhgkkoew" path="res://scripts/ag_ship_2097.gd" id="1_ship"]
+[ext_resource type="Script" uid="uid://co7e31gm6i7fs" path="res://scripts/ag_camera_2097.gd" id="2_camera"]
+[ext_resource type="PackedScene" uid="uid://d1u5hhcgev84t" path="res://trackGeo.tscn" id="3_track"]
+[ext_resource type="PackedScene" uid="uid://du8cy2tcim5ko" path="res://assets/shipTest.glb" id="4_mesh"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sky"]
+sky_top_color = Color(0.05, 0.05, 0.15, 1)
+sky_horizon_color = Color(0.2, 0.15, 0.3, 1)
+ground_bottom_color = Color(0.02, 0.02, 0.05, 1)
+ground_horizon_color = Color(0.2, 0.15, 0.3, 1)
+
+[sub_resource type="Sky" id="Sky_main"]
+sky_material = SubResource("ProceduralSkyMaterial_sky")
+
+[sub_resource type="Environment" id="Environment_main"]
+background_mode = 2
+sky = SubResource("Sky_main")
+ambient_light_source = 2
+ambient_light_color = Color(0.25, 0.25, 0.35, 1)
+ambient_light_energy = 0.4
+tonemap_mode = 2
+glow_enabled = true
+glow_intensity = 0.6
+glow_bloom = 0.2
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ship"]
+radius = 1.2
+height = 9.760986
+
+[node name="Race2097" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_main")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 50, 0)
+light_color = Color(1, 0.95, 0.9, 1)
+shadow_enabled = true
+shadow_blur = 2.0
+
+[node name="Track" parent="." instance=ExtResource("3_track")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.5, 0)
+
+[node name="AGShip2097" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -48, 17.428974, -244)
+collision_layer = 2
+script = ExtResource("1_ship")
+max_speed = 400.0
+steer_speed = 1.345
+airbrake_turn_rate = 1.845
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="AGShip2097"]
+transform = Transform3D(0.595, 0, 0, 0, -2.6008276e-08, -0.595, 0, 0.595, -2.6008276e-08, 0, 0.5564976, 0.43992615)
+shape = SubResource("CapsuleShape3D_ship")
+
+[node name="ShipMesh" parent="AGShip2097" instance=ExtResource("4_mesh")]
+transform = Transform3D(1.3, 0, 0, 0, 1.3, 0, 0, 0, 1.3, 0, 0, 0)
+
+[node name="HoverRay" type="RayCast3D" parent="AGShip2097"]
+target_position = Vector3(0, -6, 0)
+
+[node name="Camera3D" type="Camera3D" parent="." node_paths=PackedStringArray("ship")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -48, 20, -236)
+fov = 65.0
+script = ExtResource("2_camera")
+ship = NodePath("../AGShip2097")
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="SpeedLabel" type="Label" parent="HUD"]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 30.0
+offset_top = -80.0
+offset_right = 300.0
+offset_bottom = -30.0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 28
+text = "0"
+
+[node name="GripLabel" type="Label" parent="HUD"]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 30.0
+offset_top = -120.0
+offset_right = 300.0
+offset_bottom = -80.0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 18
+text = "Grip: 5.5"

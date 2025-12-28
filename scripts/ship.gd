@@ -14,7 +14,7 @@ var turn_stop_limit = 0.50
 # Variables for input values
 var speed_input = 0
 var turn_input = 0
-var body_tilt = 60
+var body_tilt = -60
 
 var airbrake_strength = 8.0  # How much extra turn
 var airbrake_drag = 0.987  # Speed reduction multiplier when airbraking

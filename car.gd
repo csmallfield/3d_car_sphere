@@ -5,7 +5,7 @@ var acceleration = 35.0
 var steering = 19.0
 var turn_speed = 4.0
 var turn_stop_limit = 0.75
-var body_tilt = 35
+var body_tilt = 50
 
 var speed_input = 0
 var turn_input = 0
