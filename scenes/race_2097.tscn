@@ -48,8 +48,17 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -48, 17.428974, -244)
 collision_layer = 2
 script = ExtResource("1_ship")
 max_speed = 400.0
+thrust_power = 100.0
 steer_speed = 1.345
-airbrake_turn_rate = 1.845
+steer_slide = 10.0
+grip = 4.0
+airbrake_turn_rate = 0.5
+airbrake_grip = 0.5
+airbrake_drag = 0.98
+pitch_speed = 1.0
+max_pitch_angle = 10.0
+wall_bounce_retain = 0.9
+wall_rotation_force = 1.5
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="AGShip2097"]
 transform = Transform3D(0.595, 0, 0, 0, -2.6008276e-08, -0.595, 0, 0.595, -2.6008276e-08, 0, 0.5564976, 0.43992615)
@@ -66,6 +75,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -48, 20, -236)
 fov = 65.0
 script = ExtResource("2_camera")
 ship = NodePath("../AGShip2097")
+speed_zoom = 1.0
+follow_speed = 5.0
+max_fov = 75.0
 
 [node name="HUD" type="CanvasLayer" parent="."]
 

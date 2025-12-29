@@ -126,24 +126,25 @@ class_name AGShip2097
 @export var hover_rot_power := 20.0
 
 # ============================================================================
-# PITCH PARAMETERS
+# PITCH PARAMETERS (Visual Only)
 # ============================================================================
 
 @export_group("Pitch")
 
-## Manual pitch rotation speed (radians per second).
-## Allows player to angle nose up/down for jumps and hills.
-## Higher = more responsive pitch control. Range: 2.0-3.5
+## Visual pitch rotation speed (radians per second).
+## Pitch is VISUAL ONLY - tilts the mesh, doesn't affect physics.
+## Affects speed efficiency slightly but ship stays on track.
+## Higher = more responsive visual pitch. Range: 2.0-3.5
 @export var pitch_speed := 2.8
 
-## How fast ship auto-levels when no pitch input.
+## How fast visual pitch returns to neutral when no input.
 ## Higher = quicker return to level. Range: 1.5-2.5
 @export var pitch_return_speed := 2.0
 
-## Maximum pitch angle in degrees (prevents flipping).
-## Clamps how far nose can point up or down.
-## Typical range: 25-35 degrees.
-@export var max_pitch_angle := 30.0
+## Maximum visual pitch angle in degrees.
+## Only affects appearance and speed efficiency.
+## Range: 15-30 degrees.
+@export var max_pitch_angle := 25.0
 
 # ============================================================================
 # COLLISION PARAMETERS
@@ -201,12 +202,14 @@ var pitch_input := 0.0
 var airbrake_left := 0.0
 var airbrake_right := 0.0
 
-# Ship rotation state (separate from velocity)
-var ship_pitch := 0.0  # Current pitch angle in radians
-
 # Airbrake state
 var current_grip := 5.5
 var is_airbraking := false
+
+# Visual state (applied to mesh, not physics)
+var visual_pitch := 0.0   # Nose up/down visual tilt
+var visual_roll := 0.0    # Banking visual tilt
+var visual_accel_pitch := 0.0  # Smoothed acceleration pitch feedback
 
 # ============================================================================
 # INITIALIZATION
@@ -215,6 +218,9 @@ var is_airbraking := false
 func _ready() -> void:
 	current_grip = grip
 	smoothed_track_normal = Vector3.UP
+	visual_pitch = 0.0
+	visual_roll = 0.0
+	visual_accel_pitch = 0.0
 	_setup_hover_ray()
 
 func _setup_hover_ray() -> void:
@@ -255,7 +261,11 @@ func _read_input() -> void:
 		throttle_input -= brake_input * 0.5
 	
 	steer_input = Input.get_axis("steer_right", "steer_left")
-	pitch_input = Input.get_axis("pitch_down", "pitch_up") if Input.is_action_pressed("pitch_up") or Input.is_action_pressed("pitch_down") else 0.0
+	
+	# Pitch input (optional - may not be defined)
+	pitch_input = 0.0
+	if InputMap.has_action("pitch_up") and InputMap.has_action("pitch_down"):
+		pitch_input = Input.get_axis("pitch_down", "pitch_up")
 	
 	airbrake_left = Input.get_action_strength("airbrake_left")
 	airbrake_right = Input.get_action_strength("airbrake_right")
@@ -338,37 +348,37 @@ func _apply_thrust(delta: float) -> void:
 	
 	var thrust_force = thrust_power * throttle_input
 	
-	# Pitch affects thrust efficiency
+	# Pitch affects thrust efficiency (visual pitch = less efficient)
 	var pitch_efficiency = _calculate_pitch_efficiency()
 	thrust_force *= pitch_efficiency
 	
-	# Get ship's forward direction
+	# Get thrust direction - always projected onto track/horizontal plane
+	# This ensures thrust can NEVER push the ship upward
 	var forward_dir = -global_transform.basis.z
 	
-	# When grounded, project thrust onto track plane
-	# This prevents thrust from fighting hover or launching ship off bumps
 	if is_grounded:
+		# Project onto track plane
 		forward_dir = forward_dir.slide(current_track_normal).normalized()
+	else:
+		# Project onto horizontal plane when airborne
+		forward_dir.y = 0
+		if forward_dir.length() > 0.01:
+			forward_dir = forward_dir.normalized()
+		else:
+			forward_dir = -global_transform.basis.z
+			forward_dir.y = 0
+			forward_dir = forward_dir.normalized()
 	
 	velocity += forward_dir * thrust_force * delta
 
 func _calculate_pitch_efficiency() -> float:
-	# Calculate pitch relative to track surface
-	var ship_forward = -global_transform.basis.z
+	# Pitch efficiency based on visual pitch (nose angle)
+	# Level = 100% efficiency, pitched up or down = reduced efficiency
+	# This rewards keeping the ship level
 	
-	# Get track tangent (forward direction along track)
-	var track_right = current_track_normal.cross(Vector3.FORWARD)
-	if track_right.length() < 0.1:
-		track_right = current_track_normal.cross(Vector3.RIGHT)
-	track_right = track_right.normalized()
-	var track_tangent = track_right.cross(current_track_normal).normalized()
-	
-	# Angle between ship forward and track tangent
-	var pitch_angle = ship_forward.angle_to(track_tangent)
-	
-	# Squared falloff - level ship = max efficiency
-	var efficiency = cos(pitch_angle * 2.0)
-	return clamp(efficiency, 0.5, 1.0)
+	var pitch_factor = abs(visual_pitch) / deg_to_rad(max_pitch_angle)
+	var efficiency = 1.0 - (pitch_factor * 0.3)  # Max 30% penalty at extreme pitch
+	return clamp(efficiency, 0.7, 1.0)
 
 # ============================================================================
 # STEERING SYSTEM
@@ -446,28 +456,32 @@ func _apply_airbrakes(delta: float) -> void:
 		velocity *= lerp(1.0, 0.85, full_brake)
 
 # ============================================================================
-# PITCH SYSTEM
+# PITCH SYSTEM (Visual Only)
 # ============================================================================
 
 func _apply_pitch(delta: float) -> void:
-	# Only allow pitch when grounded or recently grounded
-	if not is_grounded and time_since_grounded > 0.3:
-		return
+	# Pitch is now VISUAL ONLY - affects the mesh, not the physics body
+	# The physics body stays locked to track alignment
+	# Pitch only affects:
+	#   1. Visual appearance (mesh tilts)
+	#   2. Speed efficiency (calculated elsewhere)
 	
-	if abs(pitch_input) > 0.1:
-		# Manual pitch adjustment
-		var pitch_torque = pitch_input * pitch_speed * delta
-		ship_pitch += pitch_torque
+	# Only allow pitch input when grounded or very recently grounded
+	var can_pitch = is_grounded or time_since_grounded < 0.3
+	
+	if can_pitch and abs(pitch_input) > 0.1:
+		# Accumulate visual pitch
+		visual_pitch += pitch_input * pitch_speed * delta
 	else:
-		# Auto-return to level
-		ship_pitch = lerp(ship_pitch, 0.0, pitch_return_speed * delta)
+		# Auto-return to neutral
+		var return_speed = pitch_return_speed
+		if not is_grounded:
+			return_speed *= 2.0  # Faster return when airborne
+		visual_pitch = lerp(visual_pitch, 0.0, return_speed * delta)
 	
-	# Clamp pitch
+	# Clamp visual pitch
 	var max_pitch_rad = deg_to_rad(max_pitch_angle)
-	ship_pitch = clamp(ship_pitch, -max_pitch_rad, max_pitch_rad)
-	
-	# Apply pitch to ship rotation
-	rotate_object_local(Vector3.RIGHT, ship_pitch * delta * 2.0)
+	visual_pitch = clamp(visual_pitch, -max_pitch_rad, max_pitch_rad)
 
 # ============================================================================
 # DRAG SYSTEM
@@ -547,11 +561,18 @@ func _update_visuals(delta: float) -> void:
 	target_roll *= speed_factor
 	
 	# Smooth visual roll
-	ship_mesh.rotation.z = lerp(ship_mesh.rotation.z, target_roll, 8.0 * delta)
+	visual_roll = lerp(visual_roll, target_roll, 8.0 * delta)
 	
-	# Pitch based on acceleration
-	var target_pitch = -throttle_input * deg_to_rad(8.0)
-	ship_mesh.rotation.x = lerp(ship_mesh.rotation.x, target_pitch, 6.0 * delta)
+	# Smooth acceleration pitch feedback (prevents popping)
+	var target_accel_pitch = -throttle_input * deg_to_rad(5.0)
+	visual_accel_pitch = lerp(visual_accel_pitch, target_accel_pitch, 6.0 * delta)
+	
+	# Combine visual pitch from input + smoothed acceleration feedback
+	var total_pitch = visual_pitch + visual_accel_pitch
+	
+	# Apply to mesh
+	ship_mesh.rotation.x = total_pitch
+	ship_mesh.rotation.z = visual_roll
 
 # ============================================================================
 # DEBUG / UTILITY
