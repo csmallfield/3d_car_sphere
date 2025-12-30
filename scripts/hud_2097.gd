@@ -48,21 +48,34 @@ func _process(_delta: float) -> void:
 	
 	# === TRACK ANGLE ===
 	var track_normal = ship.current_track_normal
-	var slope_angle = rad_to_deg(acos(track_normal.dot(Vector3.UP)))
-	var slope_dir = Vector3(track_normal.x, 0, track_normal.z).normalized()
+	var slope_angle = rad_to_deg(acos(clamp(track_normal.dot(Vector3.UP), -1.0, 1.0)))
 	lines.append("═══ TRACK ═══")
 	lines.append("Track Normal: (%.2f, %.2f, %.2f)" % [track_normal.x, track_normal.y, track_normal.z])
 	lines.append("Slope Angle: %.1f°" % slope_angle)
 	
 	# Calculate if going uphill or downhill
+	# Track normal points OUT of surface, perpendicular to it
+	# On uphill: normal tilts TOWARD you (has component opposing your forward)
+	# On downhill: normal tilts AWAY from you (has component aligned with forward)
 	var ship_forward = -ship.global_transform.basis.z
-	var forward_flat = Vector3(ship_forward.x, 0, ship_forward.z).normalized()
-	var slope_dot = forward_flat.dot(slope_dir)
+	var forward_flat = Vector3(ship_forward.x, 0, ship_forward.z)
+	if forward_flat.length() > 0.01:
+		forward_flat = forward_flat.normalized()
+	else:
+		forward_flat = Vector3.FORWARD
+	
+	# Get horizontal component of normal
+	var normal_horizontal = Vector3(track_normal.x, 0, track_normal.z)
+	
 	var slope_type = "FLAT"
-	if slope_angle > 2.0:
-		if slope_dot > 0.3:
+	if slope_angle > 2.0 and normal_horizontal.length() > 0.01:
+		normal_horizontal = normal_horizontal.normalized()
+		var slope_dot = forward_flat.dot(normal_horizontal)
+		# Negative dot = forward opposes normal horizontal = going UPHILL
+		# Positive dot = forward aligns with normal horizontal = going DOWNHILL
+		if slope_dot < -0.3:
 			slope_type = "UPHILL"
-		elif slope_dot < -0.3:
+		elif slope_dot > 0.3:
 			slope_type = "DOWNHILL"
 		else:
 			slope_type = "BANKING"
