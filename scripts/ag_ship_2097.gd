@@ -588,3 +588,27 @@ func get_debug_info() -> String:
 	return "Speed: %.0f / %.0f\nGrip: %.1f\nGrounded: %s\nAirbrake: %s" % [
 		velocity.length(), max_speed, current_grip, is_grounded, is_airbraking
 	]
+# ============================================================================
+## EXTERNAL FORCES (Boost Pads, etc.)
+# ============================================================================
+
+## Apply an external boost force in the ship's forward direction.
+## This allows speed to exceed max_speed temporarily (drag will bring it back down).
+## Called by BoostPad and similar track elements.
+func apply_boost(amount: float) -> void:
+	var forward = -global_transform.basis.z
+	
+	# Project onto track plane if grounded for consistent behavior on slopes
+	if is_grounded:
+		forward = forward.slide(current_track_normal).normalized()
+	else:
+		# When airborne, use horizontal forward to prevent launching upward
+		forward.y = 0
+		if forward.length() > 0.01:
+			forward = forward.normalized()
+		else:
+			forward = -global_transform.basis.z
+			forward.y = 0
+			forward = forward.normalized()
+	
+	velocity += forward * amount
