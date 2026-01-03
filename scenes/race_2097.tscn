@@ -1,11 +1,15 @@
-[gd_scene load_steps=11 format=3 uid="uid://bml2byqjx44e3"]
+[gd_scene load_steps=15 format=3 uid="uid://bml2byqjx44e3"]
 
 [ext_resource type="Script" uid="uid://bjd0mrhgkkoew" path="res://scripts/ag_ship_2097.gd" id="1_ship"]
 [ext_resource type="Script" uid="uid://co7e31gm6i7fs" path="res://scripts/ag_camera_2097.gd" id="2_camera"]
 [ext_resource type="PackedScene" uid="uid://d1u5hhcgev84t" path="res://trackGeo.tscn" id="3_track"]
 [ext_resource type="PackedScene" uid="uid://du8cy2tcim5ko" path="res://assets/shipTest.glb" id="4_mesh"]
-[ext_resource type="Script" uid="uid://cpqtymrc7ug8w" path="res://scripts/hud_2097.gd" id="5_hud"]
-[ext_resource type="PackedScene" uid="uid://c8x2boost1pad" path="res://scenes/boost_pad.tscn" id="6_7n7we"]
+[ext_resource type="Script" uid="uid://crfocj0kfjqe6" path="res://scripts/hud_race.gd" id="5_hud"]
+[ext_resource type="PackedScene" uid="uid://c8x2boost1pad" path="res://scenes/boost_pad.tscn" id="6_boost"]
+[ext_resource type="Script" uid="uid://c7f4xeaaeltus" path="res://scripts/pause_menu.gd" id="7_pause"]
+[ext_resource type="Script" uid="uid://brut61km8kx5j" path="res://scripts/results_screen.gd" id="8_results"]
+[ext_resource type="Script" uid="uid://bdc2b6nx314lu" path="res://scripts/race_controller.gd" id="9_controller"]
+[ext_resource type="PackedScene" uid="uid://cs3rwb27lu2ct" path="res://scenes/start_finish_line.tscn" id="10_8efb3"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sky"]
 sky_top_color = Color(0.05, 0.05, 0.15, 1)
@@ -33,6 +37,11 @@ height = 11.638672
 
 [node name="Race2097" type="Node3D"]
 
+[node name="RaceController" type="Node" parent="." node_paths=PackedStringArray("ship", "pause_menu")]
+script = ExtResource("9_controller")
+ship = NodePath("../AGShip2097")
+pause_menu = NodePath("../PauseMenu")
+
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_main")
 
@@ -46,7 +55,7 @@ shadow_blur = 2.0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.5, 0)
 
 [node name="AGShip2097" type="CharacterBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -48, 17.036798, -244)
+transform = Transform3D(0.930296, 0, -0.36680973, 0, 1, 0, 0.36680973, 0, 0.930296, -48, 17.036798, -244)
 collision_layer = 2
 script = ExtResource("1_ship")
 max_speed = 120.0
@@ -83,12 +92,14 @@ base_offset = Vector3(0, 3, 3)
 script = ExtResource("5_hud")
 ship = NodePath("../AGShip2097")
 
-[node name="DebugLabel" type="Label" parent="HUD"]
-offset_left = 20.0
-offset_top = 20.0
-offset_right = 400.0
-offset_bottom = 600.0
-text = "Loading..."
+[node name="PauseMenu" type="CanvasLayer" parent="."]
+script = ExtResource("7_pause")
 
-[node name="BoostPad" parent="." instance=ExtResource("6_7n7we")]
+[node name="ResultsScreen" type="CanvasLayer" parent="."]
+script = ExtResource("8_results")
+
+[node name="BoostPad" parent="." instance=ExtResource("6_boost")]
 transform = Transform3D(-0.9882064, -0.040250532, 0.14774287, -0.03622611, 0.9988984, 0.02983104, -0.14878082, 0.024127085, -0.98857623, -194.35808, 1.0415039, 222.76703)
+
+[node name="StartFinishLine" parent="." instance=ExtResource("10_8efb3")]
+transform = Transform3D(-0.9506884, -0.04912601, 0.30623215, -0.047146767, 0.9987917, 0.013861322, -0.30654305, -0.0012600371, -0.9518558, -45.395466, 15.62055, -249.69783)
