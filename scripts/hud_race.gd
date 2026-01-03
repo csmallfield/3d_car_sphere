@@ -6,11 +6,11 @@ class_name HUDRace
 @export var ship: AGShip2097
 
 # UI References
-@onready var countdown_label: Label = $CountdownLabel
-@onready var lap_info_label: Label = $LapInfoLabel
-@onready var lap_times_label: RichTextLabel = $LapTimesLabel
-@onready var current_time_label: Label = $CurrentTimeLabel
-@onready var speed_label: Label = $SpeedLabel
+var countdown_label: Label
+var lap_info_label: Label
+var lap_times_label: RichTextLabel
+var current_time_label: Label
+var speed_label: Label
 
 func _ready() -> void:
 	# Connect to RaceManager signals

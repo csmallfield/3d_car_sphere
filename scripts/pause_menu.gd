@@ -93,11 +93,15 @@ func _on_resume_pressed() -> void:
 	resume_requested.emit()
 
 func _on_restart_pressed() -> void:
-	hide_pause()
+	visible = false
+	get_tree().paused = false
+	RaceManager.reset_race()
 	restart_requested.emit()
 	get_tree().reload_current_scene()
 
 func _on_quit_pressed() -> void:
-	hide_pause()
+	visible = false
+	get_tree().paused = false
+	RaceManager.reset_race()
 	quit_requested.emit()
 	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")

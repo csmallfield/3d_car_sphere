@@ -86,7 +86,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -48, 20, -236)
 fov = 65.0
 script = ExtResource("2_camera")
 ship = NodePath("../AGShip2097")
-base_offset = Vector3(0, 3, 3)
 
 [node name="HUD" type="CanvasLayer" parent="." node_paths=PackedStringArray("ship")]
 script = ExtResource("5_hud")
