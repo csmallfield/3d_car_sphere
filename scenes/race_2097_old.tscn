@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://bml2byqjx44e3"]
+[gd_scene load_steps=15 format=3 uid="uid://d0kp8mji8635x"]
 
 [ext_resource type="Script" uid="uid://bjd0mrhgkkoew" path="res://scripts/ag_ship_2097.gd" id="1_ship"]
 [ext_resource type="Script" uid="uid://co7e31gm6i7fs" path="res://scripts/ag_camera_2097.gd" id="2_camera"]
@@ -9,8 +9,7 @@
 [ext_resource type="Script" uid="uid://c7f4xeaaeltus" path="res://scripts/pause_menu.gd" id="7_pause"]
 [ext_resource type="Script" uid="uid://brut61km8kx5j" path="res://scripts/results_screen.gd" id="8_results"]
 [ext_resource type="Script" uid="uid://bdc2b6nx314lu" path="res://scripts/race_controller.gd" id="9_controller"]
-[ext_resource type="Script" uid="uid://xxs3amfehq1e" path="res://scripts/debug_hud.gd" id="10_debug"]
-[ext_resource type="PackedScene" uid="uid://cs3rwb27lu2ct" path="res://scenes/start_finish_line.tscn" id="11_83hfn"]
+[ext_resource type="PackedScene" uid="uid://cs3rwb27lu2ct" path="res://scenes/start_finish_line.tscn" id="10_8efb3"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sky"]
 sky_top_color = Color(0.05, 0.05, 0.15, 1)
@@ -56,7 +55,7 @@ shadow_blur = 2.0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.5, 0)
 
 [node name="AGShip2097" type="CharacterBody3D" parent="."]
-transform = Transform3D(0.94983023, 0, -0.31276596, 0, 1, 0, 0.31276596, 0, 0.94983023, -48.34865, 17.036798, -241.96548)
+transform = Transform3D(0.930296, 0, -0.36680973, 0, 1, 0, 0.36680973, 0, 0.930296, -48, 17.036798, -244)
 collision_layer = 2
 script = ExtResource("1_ship")
 max_speed = 120.0
@@ -92,13 +91,8 @@ ship = NodePath("../AGShip2097")
 script = ExtResource("5_hud")
 ship = NodePath("../AGShip2097")
 
-[node name="DebugHUD" type="CanvasLayer" parent="." node_paths=PackedStringArray("ship")]
-script = ExtResource("10_debug")
-ship = NodePath("../AGShip2097")
-
-[node name="PauseMenu" type="CanvasLayer" parent="." node_paths=PackedStringArray("debug_hud")]
+[node name="PauseMenu" type="CanvasLayer" parent="."]
 script = ExtResource("7_pause")
-debug_hud = NodePath("../DebugHUD")
 
 [node name="ResultsScreen" type="CanvasLayer" parent="."]
 script = ExtResource("8_results")
@@ -106,5 +100,5 @@ script = ExtResource("8_results")
 [node name="BoostPad" parent="." instance=ExtResource("6_boost")]
 transform = Transform3D(-0.9882064, -0.040250532, 0.14774287, -0.03622611, 0.9988984, 0.02983104, -0.14878082, 0.024127085, -0.98857623, -194.35808, 1.0415039, 222.76703)
 
-[node name="StartFinishLine" parent="." instance=ExtResource("11_83hfn")]
+[node name="StartFinishLine" parent="." instance=ExtResource("10_8efb3")]
 transform = Transform3D(-0.9506884, -0.04912601, 0.30623215, -0.047146767, 0.9987917, 0.013861322, -0.30654305, -0.0012600371, -0.9518558, -45.395466, 15.62055, -249.69783)
